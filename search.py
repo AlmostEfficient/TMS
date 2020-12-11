@@ -39,7 +39,7 @@ def search(term, *args):
         
         links.append(container.find('a').get('href'))
 
-        print(str(index) +": "+title + " || Reserve: " + res + " || Buy now: " + bn)
+        print(str(index) +": "+title.ljust(80, " ") + " || Reserve: " + res.ljust(7, " ") + " || Buy now: " + bn)
     if links.count == 0:
         print("No links found")
         return

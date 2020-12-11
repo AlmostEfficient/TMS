@@ -35,10 +35,11 @@ file_path = os.path.join(save_path, file_name)
 if not os.path.exists(save_path): #In case the folder doesn't exist
     os.makedirs(save_path)
 f = open(file_path, 'w')
-headers = "Title, Reserve, Buy now\n"
+headers = "Title, Reserve, Buy now, Link\n"
 f.write(headers)
 
-for container in containers:
+links = []
+for index, container in enumerate(containers):
 
     title_container = container.findAll('div', {'id': '-title'})
     title = title_container[0].text.strip()
@@ -55,8 +56,22 @@ for container in containers:
     except:
         bn = "N/A"
 
-    print(title + " || Reserve: " + res + " || Buy now: " + bn)
+    link = container.find('a').get('href')
+    links.append((link.split("?rsqid"))[0])
 
-    f.write(title.replace(",", "|") + "," + res + "," + bn + "\n")
+    print(str(index)+ ": "+title.ljust(80, " ") + " | R: " + res.ljust(7, " ") + " | BN: " + bn)
+
+    f.write(title.replace(",", "|") + "," + res + "," + bn + "," +'https://www.trademe.co.nz'+ (link.split("?rsqid"))[0] + "\n")
+
+selection = input("To open a result input the number: ")
+try:
+    index = int(selection)
+    #TODO Check link to make sure the address matches new format or old TM format. Currently it breaks cause TM either adds /a/ or doesn't 
+    address = 'https://www.trademe.co.nz'+links[int(index)]
+    cmd = 'start \"\" ' if sys.platform == 'win32' else 'open \"\" '
+    os.system(cmd+address)
+except ValueError:
+    print("That's not an int!")
 
 wait = input("Press Enter to continue.")
+f.close()
